@@ -4,6 +4,7 @@ using RabbitMQ.Client.Events;
 using System.Text;
 using Newtonsoft.Json;
 using StackExchange.Redis;
+using System.Threading;
 
 namespace Worker
 {
@@ -16,6 +17,7 @@ namespace Worker
 
         public static void Main(string[] args)
         {
+            Console.WriteLine("Started on Thread: {0}", Thread.CurrentThread.ManagedThreadId);
             var factory = new ConnectionFactory() { HostName = "localhost" };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
@@ -37,6 +39,7 @@ namespace Worker
                     var jobId = ea.BasicProperties.CorrelationId;
 
                     Console.WriteLine("Received message: {0}", message);
+                    Console.WriteLine("Processing on Thread: {0}", Thread.CurrentThread.ManagedThreadId);
                     Console.WriteLine("Correlation Id: {0}", jobId);
 
                     Parameters parameters = JsonConvert.DeserializeObject<Parameters>(message);
@@ -55,7 +58,8 @@ namespace Worker
                                      autoAck: true,
                                      consumer: consumer);
 
-                Console.WriteLine(" Press [enter] to exit.");
+                Console.WriteLine("Waiting on Thread: {0}", Thread.CurrentThread.ManagedThreadId);
+                Console.WriteLine("Press [enter] to exit.");
                 Console.ReadLine();
             }
         }
