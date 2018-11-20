@@ -51,12 +51,12 @@ namespace Bridge.Controllers
                 properties.Persistent = true;
                 properties.CorrelationId = Guid.NewGuid().ToString();
 
-                channel.ExchangeDeclare(exchange: "jobs", type: "topic");
+                //channel.ExchangeDeclare(exchange: "work.exchange", type: "topic", durable: true, autoDelete: false);
 
                 var routingKey = jobName;
                 var message = jsonRequest;
                 var body = Encoding.UTF8.GetBytes(message);
-                channel.BasicPublish(exchange: "jobs",
+                channel.BasicPublish(exchange: "work.exchange",
                                      routingKey: routingKey,
                                      basicProperties: properties,
                                      body: body);
