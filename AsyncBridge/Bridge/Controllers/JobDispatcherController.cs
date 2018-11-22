@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Bridge.Models;
-using Microsoft.AspNetCore.Http;
+using Bridge.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using StackExchange.Redis;
 
@@ -15,6 +15,15 @@ namespace Bridge.Controllers
     [ApiController]
     public class JobDispatcherController : ControllerBase
     {
+        private IConfiguration _config;
+        private readonly IBackgroundTaskQueue _queue;
+
+        public JobDispatcherController(IConfiguration config, IBackgroundTaskQueue queue)
+        {
+            _config = config;
+            _queue = queue;
+        }
+        
         [HttpGet]
         public ActionResult<string> Get(string jobId)
         {
@@ -36,13 +45,25 @@ namespace Bridge.Controllers
         [HttpPost]
         public ActionResult<string> Post([FromBody] SubmitJobRequest request)
         {
-            string jobId = SendToRabbitMq(request.Name, request.JobParameters);
+            string jobId = "1";//Dispatch(request.JobName, request.JobParameters);
+
+            var id1 = Thread.CurrentThread.ManagedThreadId;
+
+            _queue.QueueBackgroundWorkItem(async token =>
+            {
+                var id = Thread.CurrentThread.ManagedThreadId;
+                await Task.Delay(TimeSpan.FromSeconds(5), token);
+            });
+
 
             return Accepted(jobId);
         }
 
-        private static string SendToRabbitMq(string jobName, string jsonRequest)
+        private string Dispatch(string jobName, string jsonRequest)
         {
+            var routingKey = _config[jobName + ":workqueue"];
+            var callbackRoutingKey = _config[jobName + ":callbackqueue"];
+
             var factory = new ConnectionFactory() { HostName = "localhost" };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
@@ -50,10 +71,8 @@ namespace Bridge.Controllers
                 var properties = channel.CreateBasicProperties();
                 properties.Persistent = true;
                 properties.CorrelationId = Guid.NewGuid().ToString();
-
-                //channel.ExchangeDeclare(exchange: "work.exchange", type: "topic", durable: true, autoDelete: false);
-
-                var routingKey = jobName;
+                properties.ReplyTo = callbackRoutingKey;
+                               
                 var message = jsonRequest;
                 var body = Encoding.UTF8.GetBytes(message);
                 channel.BasicPublish(exchange: "work.exchange",

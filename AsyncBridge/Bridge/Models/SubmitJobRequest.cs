@@ -2,7 +2,7 @@
 {
     public class SubmitJobRequest
     {
-        public string Name { get; set; }
+        public string JobName { get; set; }
         public string JobParameters { get; set; }
     }
 
