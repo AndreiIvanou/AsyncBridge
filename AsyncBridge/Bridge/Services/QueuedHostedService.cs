@@ -16,8 +16,6 @@ namespace Bridge.Services
 
         protected async override Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            var id1 = Thread.CurrentThread.ManagedThreadId;
-
             while (!cancellationToken.IsCancellationRequested)
             {
                 var workItem = await TaskQueue.DequeueAsync(cancellationToken);

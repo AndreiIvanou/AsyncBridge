@@ -45,9 +45,7 @@ namespace Bridge.Controllers
         [HttpPost]
         public ActionResult<string> Post([FromBody] SubmitJobRequest request)
         {
-            string jobId = "1";//Dispatch(request.JobName, request.JobParameters);
-
-            var id1 = Thread.CurrentThread.ManagedThreadId;
+            string jobId = Dispatch(request.JobName, request.JobParameters);
 
             _queue.QueueBackgroundWorkItem(async token =>
             {
@@ -95,6 +93,5 @@ namespace Bridge.Controllers
                 db.StringSet(key, value);
             }
         }
-
     }
 }
