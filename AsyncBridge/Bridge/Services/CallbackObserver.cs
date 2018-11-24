@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
@@ -25,28 +23,43 @@ namespace Bridge.Services
             var factory = new ConnectionFactory() { HostName = "localhost" };
             using (var connection = factory.CreateConnection())
             {
+                List<IModel> channels = new List<IModel>();
+
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    var subscription = await _queue.DequeueSubscriptionAsync(stoppingToken);
+                    IModel channel = await SubscribeToCallbackQueue(connection, stoppingToken);
+                    channels.Add(channel);
+                }
 
-                    using (var channel = connection.CreateModel())
-                    {
-                        var consumer = new EventingBasicConsumer(channel);
-                        consumer.Received += (model, ea) =>
-                        {
-                            var body = ea.Body;
-                            var jobResult = Encoding.UTF8.GetString(body);
-                            var jobId = ea.BasicProperties.CorrelationId;
-
-                            WriteToRedis(jobId, jobResult);
-                        };
-
-                        channel.BasicConsume(queue: subscription,
-                                             autoAck: true,
-                                             consumer: consumer);
-                    }
+                foreach(var channel in channels)
+                {
+                    channel.Close();
+                    channel.Dispose();
                 }
             }
+        }
+
+        private async Task<IModel> SubscribeToCallbackQueue(IConnection connection, CancellationToken stoppingToken)
+        {
+            var subscription = await _queue.DequeueSubscriptionAsync(stoppingToken);
+
+            var channel = connection.CreateModel();
+
+            var consumer = new EventingBasicConsumer(channel);
+            consumer.Received += (model, ea) =>
+            {
+                var jobId = ea.BasicProperties.CorrelationId;
+                var body = ea.Body;
+                var jobResult = Encoding.UTF8.GetString(body);
+
+                WriteToRedis(jobId, jobResult);
+            };
+
+            channel.BasicConsume(queue: subscription,
+                                 autoAck: true,
+                                 consumer: consumer);
+
+            return channel;
         }
 
         private static void WriteToRedis(string key, string value)

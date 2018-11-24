@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Bridge.Models;
 using Bridge.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -16,9 +14,9 @@ namespace Bridge.Controllers
     public class JobDispatcherController : ControllerBase
     {
         private IConfiguration _config;
-        private readonly IBackgroundTaskQueue _queue;
+        private readonly ICallbackSubscriptionQueue _queue;
 
-        public JobDispatcherController(IConfiguration config, IBackgroundTaskQueue queue)
+        public JobDispatcherController(IConfiguration config, ICallbackSubscriptionQueue queue)
         {
             _config = config;
             _queue = queue;
@@ -47,13 +45,6 @@ namespace Bridge.Controllers
         {
             string jobId = Dispatch(request.JobName, request.JobParameters);
 
-            _queue.QueueBackgroundWorkItem(async token =>
-            {
-                var id = Thread.CurrentThread.ManagedThreadId;
-                await Task.Delay(TimeSpan.FromSeconds(5), token);
-            });
-
-
             return Accepted(jobId);
         }
 
@@ -79,6 +70,8 @@ namespace Bridge.Controllers
                                      body: body);
 
                 WriteToRedis(properties.CorrelationId, "In progress");
+
+                _queue.EnqueueSubscription(callbackRoutingKey);
 
                 return properties.CorrelationId;
             }
