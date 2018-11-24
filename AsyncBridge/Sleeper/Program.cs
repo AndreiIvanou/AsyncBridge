@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using StackExchange.Redis;
 using System;
 using System.Text;
 using System.Threading;
@@ -61,7 +60,7 @@ namespace Sleeper
                 properties.Persistent = true;
                 properties.CorrelationId = jobId;
 
-                var resultMessage = "Done!";
+                var resultMessage = $"Done at {DateTime.Now}.";
                 var resultBody = Encoding.UTF8.GetBytes(resultMessage);
 
                 callbackChannel.BasicPublish(exchange: "callback.exchange",

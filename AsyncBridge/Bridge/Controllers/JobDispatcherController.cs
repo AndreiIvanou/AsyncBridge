@@ -13,7 +13,7 @@ namespace Bridge.Controllers
     [ApiController]
     public class JobDispatcherController : ControllerBase
     {
-        private IConfiguration _config;
+        private readonly IConfiguration _config;
         private readonly ICallbackSubscriptionQueue _queue;
 
         public JobDispatcherController(IConfiguration config, ICallbackSubscriptionQueue queue)
@@ -69,7 +69,7 @@ namespace Bridge.Controllers
                                      basicProperties: properties,
                                      body: body);
 
-                WriteToRedis(properties.CorrelationId, "In progress");
+                WriteToRedis(properties.CorrelationId, $"Since {DateTime.Now} is in progress.");
 
                 _queue.EnqueueSubscription(callbackRoutingKey);
 
