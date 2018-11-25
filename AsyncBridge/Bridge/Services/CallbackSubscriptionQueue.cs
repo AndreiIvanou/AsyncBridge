@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Bridge.Services
+namespace Dispatcher.Services
 {
     public interface ICallbackSubscriptionQueue
     {

@@ -1,0 +1,29 @@
+﻿@page
+<div class="container">
+    <div class="row">&nbsp;</div>
+    <div class="row">
+        <div class="col-6">&nbsp;</div>
+        <div class="col-6">
+            Job Name&nbsp;&nbsp;: <input type="text" id="jobName" />
+            <br />
+            Parameters: <input type="text" id="jobParameters" />
+            <br />
+            <input type="button" id="sendButton" value="Send" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <hr />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">&nbsp;</div>
+        <div class="col-6">
+            <ul id="messagesList"></ul>
+        </div>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/@@aspnet/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/client.js"></script>
+@*<script src="~/js/chat.js"></script>*@

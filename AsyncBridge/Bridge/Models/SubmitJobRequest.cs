@@ -1,4 +1,4 @@
-﻿namespace Bridge.Models
+﻿namespace Dispatcher.Models
 {
     public class SubmitJobRequest
     {

@@ -7,7 +7,7 @@ using RabbitMQ.Client.Events;
 using StackExchange.Redis;
 using System.Text;
 
-namespace Bridge.Services
+namespace Dispatcher.Services
 {
     public class CallbackObserver : BackgroundService
     {
@@ -62,13 +62,17 @@ namespace Bridge.Services
             return channel;
         }
 
-        private static void WriteToRedis(string key, string value)
+        private static void WriteToRedis(string jobId, string jobResult)
         {
             using (ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost"))
             {
                 IDatabase db = redis.GetDatabase();
 
-                db.StringSet(key, value);
+                db.StringSet(jobId, jobResult);
+
+                var pub = redis.GetSubscriber();
+
+                pub.Publish("jobnotifications", jobId);
             }
         }
     }

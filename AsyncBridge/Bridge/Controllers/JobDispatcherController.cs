@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Text;
-using Bridge.Models;
-using Bridge.Services;
+using Dispatcher.Models;
+using Dispatcher.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using StackExchange.Redis;
 
-namespace Bridge.Controllers
+namespace Dispatcher.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
