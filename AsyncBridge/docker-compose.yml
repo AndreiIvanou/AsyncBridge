@@ -1,0 +1,29 @@
+version: '3.4'
+
+services:
+  counter:
+    image: ${DOCKER_REGISTRY-}counter
+    build:
+      context: .
+      dockerfile: Counter/Dockerfile
+
+  sleeper:
+    image: ${DOCKER_REGISTRY-}sleeper
+    build:
+      context: .
+      dockerfile: Sleeper/Dockerfile
+
+
+  dispatcher:
+    image: ${DOCKER_REGISTRY-}dispatcher
+    build:
+      context: .
+      dockerfile: Bridge/Dockerfile
+
+
+  notifier:
+    image: ${DOCKER_REGISTRY-}notifier
+    build:
+      context: .
+      dockerfile: Notifier/Dockerfile
+

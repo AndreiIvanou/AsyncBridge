@@ -17,9 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sleeper", "Sleeper\Sleeper.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workers", "Workers", "{C4F5F4DF-5D1E-48A3-816C-A2511DA2422E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Counter", "Counter\Counter.csproj", "{B7D866F5-C2A6-4760-A8F3-0D8B30E03835}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Counter", "Counter\Counter.csproj", "{B7D866F5-C2A6-4760-A8F3-0D8B30E03835}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifier", "Notifier\Notifier.csproj", "{4309B890-F2A0-4909-8281-E6D5EC7C860D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notifier", "Notifier\Notifier.csproj", "{4309B890-F2A0-4909-8281-E6D5EC7C860D}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{9B07C9E5-3503-477D-B947-C057D927FB8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{4309B890-F2A0-4909-8281-E6D5EC7C860D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4309B890-F2A0-4909-8281-E6D5EC7C860D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4309B890-F2A0-4909-8281-E6D5EC7C860D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B07C9E5-3503-477D-B947-C057D927FB8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B07C9E5-3503-477D-B947-C057D927FB8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B07C9E5-3503-477D-B947-C057D927FB8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B07C9E5-3503-477D-B947-C057D927FB8F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
