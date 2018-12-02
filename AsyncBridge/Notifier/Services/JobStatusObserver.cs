@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Notifier.Hubs;
 using StackExchange.Redis;
@@ -11,15 +12,19 @@ namespace Notifier.Services
     {
         private readonly IHubContext<NotificationHub> _hubContext;
         private ConnectionMultiplexer _redis;
+        private readonly IConfiguration _config;
 
-        public JobStatusObserver(IHubContext<NotificationHub> hubContext)
+        public JobStatusObserver(IConfiguration config, IHubContext<NotificationHub> hubContext)
         {
+            _config = config;
             _hubContext = hubContext;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _redis = ConnectionMultiplexer.Connect("localhost");
+            string redisAddress = _config["REDIS_ADDRESS"];
+
+            _redis = ConnectionMultiplexer.Connect(redisAddress);
 
             var sub = _redis.GetSubscriber();
 

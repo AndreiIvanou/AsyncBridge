@@ -25,7 +25,12 @@ namespace Dispatcher.Controllers
         [HttpGet]
         public ActionResult<string> Get(string jobId)
         {
-            using (ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost"))
+            if (string.IsNullOrWhiteSpace(jobId))
+                return BadRequest();
+
+            string redisAddress = _config["REDIS_ADDRESS"];
+
+            using (ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(redisAddress))
             {
                 IDatabase db = redis.GetDatabase();
 
@@ -52,8 +57,9 @@ namespace Dispatcher.Controllers
         {
             var routingKey = _config[jobName + ":workqueue"];
             var callbackRoutingKey = _config[jobName + ":callbackqueue"];
+            string rabbitmqAddress = _config["RABBITMQ_ADDRESS"];
 
-            var factory = new ConnectionFactory() { HostName = "localhost" };
+            var factory = new ConnectionFactory() { HostName = rabbitmqAddress };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
@@ -77,9 +83,10 @@ namespace Dispatcher.Controllers
             }
         }
 
-        private static void WriteToRedis(string key, string value)
+        private void WriteToRedis(string key, string value)
         {
-            using (ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost"))
+            string redisAddress = _config["REDIS_ADDRESS"];
+            using (ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(redisAddress))
             {
                 IDatabase db = redis.GetDatabase();
 

@@ -6,21 +6,26 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using StackExchange.Redis;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
 namespace Dispatcher.Services
 {
     public class CallbackObserver : BackgroundService
     {
+        private readonly IConfiguration _config;
         private readonly ICallbackSubscriptionQueue _queue;
 
-        public CallbackObserver(ICallbackSubscriptionQueue queue)
+        public CallbackObserver(IConfiguration config, ICallbackSubscriptionQueue queue)
         {
+            _config = config;
             _queue = queue;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var factory = new ConnectionFactory() { HostName = "localhost" };
+            string rabbitmqAddress = _config["RABBITMQ_ADDRESS"];
+
+            var factory = new ConnectionFactory() { HostName = rabbitmqAddress };
             using (var connection = factory.CreateConnection())
             {
                 List<IModel> channels = new List<IModel>();
@@ -62,9 +67,11 @@ namespace Dispatcher.Services
             return channel;
         }
 
-        private static void WriteToRedis(string jobId, string jobResult)
+        private void WriteToRedis(string jobId, string jobResult)
         {
-            using (ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost"))
+            string redisAddress = _config["REDIS_ADDRESS"];
+
+            using (ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(redisAddress))
             {
                 IDatabase db = redis.GetDatabase();
 

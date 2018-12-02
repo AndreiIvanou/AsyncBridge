@@ -17,8 +17,10 @@ namespace Counter
 
         static void Main(string[] args)
         {
+            string rabbitmqAddress = Environment.GetEnvironmentVariable("RABBITMQ_ADDRESS");
+
             Console.WriteLine("Started on Thread: {0}", Thread.CurrentThread.ManagedThreadId);
-            var factory = new ConnectionFactory() { HostName = "localhost" };
+            var factory = new ConnectionFactory() { HostName = rabbitmqAddress };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {

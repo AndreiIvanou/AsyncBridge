@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Counter": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "RABBITMQ_ADDRESS": "localhost"
+      }
+    }
+  }
+}

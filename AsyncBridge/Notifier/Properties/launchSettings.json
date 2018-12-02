@@ -12,6 +12,8 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
+        "JOB_DISPATCHER_HOST": "localhost:50076",
+        "REDIS_ADDRESS": "localhost",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },

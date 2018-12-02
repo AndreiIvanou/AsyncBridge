@@ -12,9 +12,11 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "api/JobDispatcher",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "REDIS_ADDRESS": "localhost",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "RABBITMQ_ADDRESS": "localhost"
       }
     },
     "Bridge": {
