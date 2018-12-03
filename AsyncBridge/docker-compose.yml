@@ -1,29 +1,46 @@
 version: '3.4'
 
 services:
+  rmq:
+    image: rabbitmq:management-alpine
+    ports: 
+      - "8080:15672"
+      - "15672:15672"
+      - "5672:5672"
+
   dispatcher:
     image: ${DOCKER_REGISTRY-}dispatcher
     build:
       context: .
       dockerfile: Bridge/Dockerfile
+    networks:
+      - bridge-net
 
   notifier:
     image: ${DOCKER_REGISTRY-}notifier
     build:
       context: .
       dockerfile: Notifier/Dockerfile
-
+    networks:
+      - bridge-net
 
   counter:
     image: ${DOCKER_REGISTRY-}counter
     build:
       context: .
       dockerfile: Counter/Dockerfile
-
+    networks:
+      - bridge-net
 
   sleeper:
     image: ${DOCKER_REGISTRY-}sleeper
     build:
       context: .
       dockerfile: Sleeper/Dockerfile
+    networks:
+      - bridge-net
+
+networks:
+  bridge-net:
+    driver: bridge    
 
